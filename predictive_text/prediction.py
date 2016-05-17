@@ -35,6 +35,7 @@ class Predictor():
             results[int(len(match) != len(n))].append((match, self.ocurrences[match]))
             # results[int(len(match) != len(n))].append((match, self.ocurrences[match]))
 
+        print(results)
         k = lambda m: m[1]
         return results[0][0][0]
         # return(

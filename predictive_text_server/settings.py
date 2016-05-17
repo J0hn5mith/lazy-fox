@@ -35,6 +35,10 @@ class Common(Configuration):
 
         'django_extensions',
         'debug_toolbar',
+
+        'gui', 
+        'api', 
+        'predictive_text', 
     ]
 
     MIDDLEWARE_CLASSES = [
@@ -114,6 +118,9 @@ class Development(Common):
     DEBUG = True
 
     ALLOWED_HOSTS = []
+    STATICFILES_DIRS = [
+    os.path.join(Common.BASE_DIR, "static"),
+        ]
 
 
 class Staging(Common):

@@ -68,6 +68,12 @@ $ heroku config:set ENVIRONMENT=PRODUCTION
 $ heroku config:set DJANGO_SECRET_KEY=`./manage.py generate_secret_key`
 ```
 
+## Frontend
+For compiling the `*.scss` files use the following command
+```
+gulp sass
+```
+
 ## License
 
 The MIT License (MIT)
