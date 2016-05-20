@@ -1,13 +1,73 @@
-$font-stack:    Helvetica, sans-serif;
+$font-stack:    American Typewriter’, ‘Courier New’, Courier, Monaco, mono;
 $primary-color: white;
+$content-width: 500px;
+$violet: #6C0AAE;
+$violet-light: #954FC5;
+$violet-dark: #42006E;
+$yellow: #FFFA00;
+
 
 body {
 	font: 100% $font-stack;
-	color: $primary-color;
-	background-color: #5E2185
+	background-color: $violet;
+	display: flex;
+	flex-direction: column;
+	color: white;
+}
+
+::selection {
+	background: $yellow;
+	color:#000000; 
+}
+
+#section{
+}
+
+.logo {
+	align-self: center;
+}
+.logo__image {
+}
+
+.input {
+	align-self: center;
+	width: $content-width;
+	margin-top:30px;
+}
+
+.input__suggestions--hidden{
+}
+
+.input__suggestions--visible{
+}
+
+.input__suggestions-list{
+	list-style-position: inside;
+	margin-bottom: 20px;
+	padding: 0px;
+	font-size: 24px;
 
 }
-#section{
-	/*background-color: "green"*/
+
+ul.input__suggestions-list li{
+	background-color: $violet-dark;
+	display:inline;
+	margin: 0px;
+	padding: 10px;
+	border-radius: 10px;
 }
+
+.input__type-area{
+	background-color: $violet-light;
+	width: $content-width;
+	height: $content-width;
+	border-radius: 10px;
+	padding: 30px;
+	font-family: inherit;
+	font-size: inherit;
+	font-color: inherit;
+	color: inherit;
+	border-width: 0px;
+}
+
 

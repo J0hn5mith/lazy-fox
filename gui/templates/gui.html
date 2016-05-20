@@ -1,28 +1,29 @@
 {% load staticfiles %}
+
 <head>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"> 
+	{% if debug %}
+	<script src='http://127.0.0.1:9001/js/socket.js'></script>
+	{% endif %}
 </head>
 
 <body>
-    <div id="header">
-        <h1>City Gallery</h1>
-    </div>
-
-    <div id="nav">
-        London
-        <br> Paris
-        <br> Tokyo
-    </div>
-
-    <div id="section" class="test">
-        <h1>London</h1>
-        <p>London is the capital city of England. It is the most populous city in the United Kingdom, with a metropolitan area of over 13 million inhabitants.</p>
-        <p>Standing on the River Thames, London has been a major settlement for two millennia, its history going back to its founding by the Romans, who named it Londinium.
-        </p>
-    </div>
-
-    <div id="footer">
-        Copyright © W3Schools.com
-    </div>
+	<div class="logo" id="Logo">
+		<img class=logo__image" src="{% static "img/brown_fox_logo.png" %}" alt="" width="450px"/>
+	</div>
+	<div class="input">
+		<div>
+			<ul class="input__suggestions-list">
+				<li>Item 1</li>
+				<li>Item 2</li>
+				<li>Item 3</li>
+				<li>Item 4</li>
+			</ul>
+		</div>
+		<textarea class="input__type-area">
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vitae est rhoncus purus venenatis vulputate id ac nunc. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed risus enim, aliquam non elementum in, ultricies rhoncus urna. Aliquam non pharetra lectus. Phasellus arcu nunc, luctus eget fringilla ac, dictum a lorem. Donec elementum risus a tincidunt commodo. Sed accumsan ipsum id enim tincidunt feugiat. Suspendisse a hendrerit leo, nec malesuada quam. Sed eleifend vulputate eros.
+Etiam lobortis tellus sapien, egestas pharetra lorem consectetur eget. Vivamus ut odio pharetra, tincidunt felis non, aliquet erat. Pellentesque mollis nisi nunc, sit amet sodales tortor viverra at. Sed pretium quam quis metus lobortis, ac molestie mi pharetra. Ut placerat enim sed molestie euismod. Aenean id enim tincidunt, rutrum odio ut, cursus leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras tristique sodales risus, a euismod nibh sollicitudin quis. Ut ut massa semper, fringilla ex eget, vulputate eros. Donec vehicula turpis vitae quam semper, nec posuere nulla dignissim. Quisque ac consequat nisl. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+		</textarea>
+	</div>
 
 </body>
