@@ -50,12 +50,16 @@ body {
 
 }
 
-ul.input__suggestions-list li{
+.input__suggestions-list-item li{
 	background-color: $violet-dark;
 	display:inline;
-	margin: 0px;
+	margin: 10px;
 	padding: 10px;
 	border-radius: 10px;
+}
+
+.input__suggestion-list-item--highlighted li{
+	background-color: $yellow;
 }
 
 .input__type-area{

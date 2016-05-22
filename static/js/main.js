@@ -10,6 +10,11 @@ KEYS = {
 }
 TYPE_AREA = "#type-area"
 PREDICTIONS_LIST = "#predictions-list"
+PREDICTION_SERVER_URL = "http://127.0.0.1:8000/api/predict/"
+WHITE_SPACE_CODE = 32
+
+var currentPredictions = [];
+var selecting = false;
 
 keyToChar = {
 	" ": " "
@@ -32,7 +37,7 @@ function transformTypedCharacter(c) {
 	return "";
 }
 
-function insertTextAtCursor(text) {
+function insertTextAtCursor(element, text) {
 	//http://stackoverflow.com/questions/3923089/can-i-conditionally-change-the-character-entered-into-an-input-on-keypress
 	var sel, range, textNode;
 	if (window.getSelection) {
@@ -40,7 +45,7 @@ function insertTextAtCursor(text) {
 		if (sel.getRangeAt && sel.rangeCount) {
 			range = sel.getRangeAt(0).cloneRange();
 			range.deleteContents();
-			textNode = document.createTextNode(text);
+			textNode = document.createTextNode("abc " + text + " efg");
 			range.insertNode(textNode);
 
 			// Move caret to the end of the newly inserted text node
@@ -48,7 +53,15 @@ function insertTextAtCursor(text) {
 			range.setEnd(textNode, textNode.length);
 			sel.removeAllRanges();
 			sel.addRange(range);
-			this.selectionStart = this.selectionEnd = 100;
+			element.innerHTML = "hello world";
+
+			sel = window.getSelection();
+			sel.removeAllRanges();
+			range.setStart(element, textNode.length);
+			range.setEnd(element, textNode.length);
+			//sel.getRangeAt(0).setStart(element, 0);
+			//sel.getRangeAt(0).setEnd(0);
+			sel.addRange(range);
 		}
 	} else if (document.selection && document.selection.createRange) {
 		range = document.selection.createRange();
@@ -62,19 +75,33 @@ function updatePredictions(character) {
 	if (currentWord == null) {
 		return
 	}
-	predictions = getPredictions(currentWord);
-	for (i in predictions) {
-		$(PREDICTIONS_LIST).append(
-			"<li>" + predictions[i] + "</li>"
-		);
-	}
+	data = '{ "sequence": "' + currentWord + '"}'
+	$.ajax({
+		url: PREDICTION_SERVER_URL,
+		type: 'POST',
+		data: data,
+		success: function(response) {
+			var predictions = response.suggestions;
+			addPredictions(predictions);
+		}
+	});
 }
 
 function removePredictions() {
 	$(PREDICTIONS_LIST).children().remove();
+	currentPredicitons = []
 }
 
-function addPredictions() {}
+function addPredictions(predictions) {
+	for (prediction of predictions) {
+		predictionElement = $(PREDICTIONS_LIST).append(
+			"<li>" + prediction + "</li>"
+		);
+		predictionElement.addClass("input__suggestions-list-item");
+		currentPredictions.push(predictionElement);
+
+	}
+}
 
 function getCurrentWord(currentChar) {
 	if (currentChar == " ") {
@@ -90,19 +117,30 @@ function getCurrentWord(currentChar) {
 	return tokens[tokens.length - 1] + currentChar
 }
 
-function getPredictions(word) {
-	return [word.slice(0, -1), word.slice(0, -2), word.slice(0, -3)]
+function selectPrediction() {}
+
+function highlightPredictions() {
+	for(prediction of currentPredictions){
+		console.log(prediction);
+		prediction.addClass("input__suggestion-list-item--highlighted");
+	}
 }
 
 window.onload = function() {
 	$(TYPE_AREA).keypress(function(evt) {
 		if (evt.which) {
-			var charStr = String.fromCharCode(evt.which);
-			var transformedChar = transformTypedCharacter(charStr);
-			updatePredictions(transformedChar);
-			if (transformedChar != charStr) {
-				insertTextAtCursor(transformedChar);
+			if (evt.keyCode == WHITE_SPACE_CODE) {
+				highlightPredictions();
 				return false;
+
+			} else {
+				var charStr = String.fromCharCode(evt.which);
+				var transformedChar = transformTypedCharacter(charStr);
+				updatePredictions(transformedChar);
+				if (transformedChar != charStr) {
+					//insertTextAtCursor(this, transformedChar);
+					//return false;
+				}
 			}
 		}
 	});

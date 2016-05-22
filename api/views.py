@@ -12,5 +12,9 @@ def  predict(request):
 
     json_data = json.loads(request.body.decode('utf-8'))
     sequence = json_data['sequence']
-    return JsonResponse({sequence: p.search(sequence) })
+    response = []
+    return JsonResponse({
+        "sequence": sequence,
+        "suggestions": p.search(sequence) 
+        })
 
