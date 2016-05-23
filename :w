@@ -8,12 +8,10 @@ KEYS = {
 	'l': 'ol.',
 	';': 'p;/',
 }
-
 TYPE_AREA = "#type-area"
 PREDICTIONS_LIST = "#predictions-list"
 PREDICTION_SERVER_URL = "http://127.0.0.1:8000/api/predict/"
 WHITE_SPACE_CODE = 32
-WHETE_SPACE_STRINGS = [" ", "\xa0"]
 
 var selecting = false;
 
@@ -31,11 +29,35 @@ for (key in KEYS) {
 
 function transformTypedCharacter(c) {
 	if (keyToChar[c] != undefined) {
+		console.log(keyToChar[c]);
 		return keyToChar[c]
 	} else {
 		console.log("Character not supported: " + c);
 	}
 	return "";
+}
+
+function insertTextAtCursor(element, text) {
+	//http://stackoverflow.com/questions/3923089/can-i-conditionally-change-the-character-entered-into-an-input-on-keypress
+	var sel, range, textNode;
+	if (window.getSelection) {
+		sel = window.getSelection();
+		if (sel.getRangeAt && sel.rangeCount) {
+			sel = window.getSelection();
+			range = sel.getRangeAt(0).cloneRange();
+			sel.removeAllRanges();
+
+			range.setStart(element, textNode.length);
+			range.setEnd(element, textNode.length);
+
+			sel.getRangeAt(0).setStart(element, 0);
+			sel.getRangeAt(0).setEnd(0);
+			sel.addRange(range);
+		}
+	} else if (document.selection && document.selection.createRange) {
+		range = document.selection.createRange();
+		range.pasteHTML(text);
+	}
 }
 
 function updatePredictions(character) {
@@ -45,7 +67,6 @@ function updatePredictions(character) {
 		return
 	}
 	data = '{ "sequence": "' + currentWord + '"}'
-	console.log(data);
 	$.ajax({
 		url: PREDICTION_SERVER_URL,
 		type: 'POST',
@@ -78,11 +99,12 @@ function getCurrentWord(currentChar) {
 	if (position == 0) {
 		return null
 	}
-	var text = selection.anchorNode.nodeValue.slice(0, selection.anchorOffset);
-	text = cleanText(text);
-	tokens = text.split(" ");
-	var word = cleanWord(tokens[tokens.length - 1]);
-	console.log(tokens);
+	preText = selection.anchorNode.nodeValue.slice(0, selection.anchorOffset)
+	tokens = preText.split(" ");
+	word = cleanWord(tokens[tokens.length - 1] + currentChar);
+	if (currentChar){
+		word = word + currentChar;
+	}
 	return word
 }
 
@@ -91,15 +113,8 @@ function cleanWord(word) {
 	return cleaned;
 }
 
-function cleanText(text) {
-	return text.replace(/\s/g, ' ');
-}
-
 function selectPrediction() {
-	prediction = $(PREDICTIONS_LIST).children()[0].innerHTML;
-	var range = deletePreviousWord(prediction, range);
-	range = insertWord(prediction, range);
-	insertWord(" ", range);
+
 }
 
 function highlightPredictions() {
@@ -111,21 +126,21 @@ window.onload = function() {
 		if (evt.which) {
 			if (selecting) {
 				selectPrediction();
-				selecting = false;
 			} else {
-				if (evt.keyCode == WHITE_SPACE_CODE && getCurrentWord() != null) {
+				if (evt.keyCode == WHITE_SPACE_CODE && getCurrentWord() !=null) {
 					highlightPredictions();
 					selecting = true
+					return false;
 				} else {
 					var charStr = String.fromCharCode(evt.which);
 					var transformedChar = transformTypedCharacter(charStr);
 					var range = getCurrentPosition();
 					insertWord(transformedChar, range);
 					updatePredictions(transformedChar);
+					return false;
 				}
 			}
 		}
-		return false;
 	});
 }
 
@@ -142,28 +157,19 @@ function replaceCurrentWord(newWord) {
 }
 
 function setCursorPosition(position) {
-	return setCursorRange(position, position);
-}
-
-function setCursorRange(start, end){
 	var sel, range, typeArea;
 	sel = window.getSelection();
-	typeArea = $(TYPE_AREA).contents()[0];
-
 	if (sel.getRangeAt != null && sel.rangeCount) {
 		range = sel.getRangeAt(0).cloneRange();
+		typeArea = $(TYPE_AREA).contents()[0];
 		sel.removeAllRanges();
-	}
-	else {
-		range = document.createRange();
-		range.selectNode(typeArea);
-	}
 
-	range.setStart(typeArea, start);
-	range.setEnd(typeArea, end);
-	sel.addRange(range);
+		range.setStart(typeArea, position);
+		range.setEnd(typeArea, position);
+		sel.addRange(range);
 
-	return range;
+		return range;
+	}
 }
 
 function getCurrentPosition() {
@@ -175,34 +181,10 @@ function getCurrentPosition() {
 
 function insertWord(word, range) {
 	textNode = document.createTextNode(word);
-	textNode.normalize()
-	var currentPosition = range.startOffset
 	range.insertNode(textNode);
+	textNode.normalize()
 	$(TYPE_AREA)[0].normalize();
-	return setCursorPosition(currentPosition + word.length);
-}
 
-function deletePreviousWord(){
-	var range = selectPreviousWord();
-	range.deleteContents();
-	return range;
-}
-
-function selectPreviousWord(){
-	var range = getCurrentPosition();
-	var text = getInputText();
-	var position = range.startOffset
-	var start = position;
-	while(start >=1 && WHETE_SPACE_STRINGS.indexOf(text.charAt(start-1)) < 0){
-	//while(start >=1 && text.charAt(start-1) != ' '){
-		start -=1;
-		console.log(text.charAt(start-1));
-		console.log(text.charAt(start-1) == ' ');
-	}
-	return setCursorRange(start, position);
-}
-
-function getInputText(){
-	var selection = window.getSelection();
-	return selection.anchorNode.nodeValue;
+	var currentPosition = range.endOffset
+	setCursorPosition(currentPosition);
 }
