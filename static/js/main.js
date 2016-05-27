@@ -67,22 +67,22 @@
 	    ';': 7,
 	}
 
-	TYPE_AREA = "#type-area";
-	PREDICTIONS_LIST = "#predictions-list";
-	PREDICTION_SERVER_URL = "http://127.0.0.1:8000/api/predict/";
-	WHITE_SPACE_CODE = 32;
-	WHETE_SPACE_STRINGS = [" ", "\xa0"];
-	AUTO_WHTE_SPACE = false;
-
-	var selecting = false;
-	var typing_word = false;
 	State = {
 	    NEUTRAL: 0,
 	    TYPING: 1,
 	    SELECTING: 2
 	};
 
+	TYPE_AREA = "#type-area";
+	PREDICTIONS_LIST = "#predictions-list";
+	PREDICTION_SERVER_URL = "http://127.0.0.1:8000/api/predict/";
+	WHITE_SPACE_CODE = 32;
+	BACK_SPACE_CODE = 8;
+	WHETE_SPACE_STRINGS = [" ", "\xa0"];
+	AUTO_WHTE_SPACE = false;
+
 	var state = State.NEUTRAL;
+	var current_word_length = 0;
 
 	keyToChar = {
 	    " ": " "
@@ -96,7 +96,7 @@
 	    }
 	}
 
-	function transformTypedCharacter(c) {
+	transformTypedCharacter = function(c) {
 	    if (keyToChar[c] != undefined) {
 	        return keyToChar[c]
 	    } else {
@@ -105,9 +105,10 @@
 	    return "";
 	}
 
-	function updatePredictions(character) {
+	updatePredictions = function(character) {
 	    removePredictions();
 	    currentWord = getCurrentWord(character);
+	    console.log(currentWord);
 	    if (currentWord == null) {
 	        return
 	    }
@@ -123,11 +124,11 @@
 	    });
 	}
 
-	function removePredictions() {
+	removePredictions = function() {
 	    $(PREDICTIONS_LIST).children().remove();
 	}
 
-	function addPredictions(predictions) {
+	addPredictions = function(predictions) {
 	    for (prediction of predictions) {
 	        $(PREDICTIONS_LIST).append(
 	            '<div class="input__suggestions-list-item">' + prediction +
@@ -136,7 +137,8 @@
 	    }
 	}
 
-	function getCurrentWord(currentChar) {
+	getCurrentWord = function(currentChar) {
+
 	    if (currentChar == " ") {
 	        return null
 	    }
@@ -147,53 +149,58 @@
 	    }
 	    var text = selection.anchorNode.nodeValue.slice(0, selection.anchorOffset);
 	    text = cleanText(text);
-	    tokens = text.split(" ");
-	    var word = cleanWord(tokens[tokens.length - 1]);
-	    return word
+	    return text.slice(position - current_word_length, position);
 	}
 
-	function cleanWord(word) {
+	cleanWord = function(word) {
 	    cleaned = word.replace(/[\n\t]/g, '');
 	    return cleaned;
 	}
 
-	function cleanText(text) {
+	cleanText = function(text) {
 	    return text.replace(/\s/g, ' ');
 	}
 
-	function selectPrediction(number) {
+	selectPrediction = function(number) {
+	    console.log($(PREDICTIONS_LIST).children().length);
+	    if (number >= $(PREDICTIONS_LIST).children().length) {
+	        return false
+	    }
 	    prediction = $(PREDICTIONS_LIST).children()[number].innerHTML;
 	    var range = deletePreviousWord(prediction, range);
 	    range = insertWord(prediction, range);
 	    if (AUTO_WHTE_SPACE) {
 	        insertWord("\xa0", range);
 	    }
+	    return true
 	}
 
-	function highlightPredictions() {
+	highlightPredictions = function() {
 	    $(PREDICTIONS_LIST).children().addClass(
 	        "input__suggestion-list-item--highlighted")
 	}
 
 	window.onload = function() {
 	    $(TYPE_AREA).keypress(function(evt) {
+	        console.log(current_word_length);
 	        if (evt.which) {
 	            var character = String.fromCharCode(evt.which);
 	            if (state == State.SELECTING) {
 	                number = characterToNumber(character)
-	                selectPrediction(number);
+	                if (!selectPrediction(number)) {
+	                    console.log("Invalid selection");
+	                    return false;
+	                }
 	                removePredictions();
-	                state = State.NEUTRAL;
-	                return false;
+	                changeState(State.NEUTRAL);
 	            } else if (state == State.TYPING) {
 	                if (evt.keyCode == WHITE_SPACE_CODE &&
 	                    getCurrentWord() != null) {
 	                    highlightPredictions();
-	                    state = State.SELECTING
+	                    changeState(State.SELECTING);
 	                } else {
 	                    handleCharacterInput(character)
 	                }
-	                return false;
 	            } else if (state == State.NEUTRAL) {
 	                if (WHETE_SPACE_STRINGS.indexOf(character) >= 0) {
 	                    var range = getCurrentPosition();
@@ -201,9 +208,8 @@
 	                } else {
 	                    handleCharacterInput(character)
 	                }
-	                state = State.TYPING;
+	                changeState(State.TYPING);
 	            }
-	            return false;
 	        }
 	        return false;
 	    })
@@ -214,10 +220,11 @@
 	        character);
 	    var range = getCurrentPosition();
 	    insertWord(transformedChar, range);
+	    current_word_length = current_word_length + character.length
 	    updatePredictions(transformedChar);
 	}
 
-	function selectCurrentWord() {
+	selectCurrentWord = function() {
 	    var range = document.createRange();
 	    range.selectNodeContents($(TYPE_AREA)[0]);
 	    var selection = window.getSelection();
@@ -225,15 +232,15 @@
 	    selection.addRange(range);
 	}
 
-	function replaceCurrentWord(newWord) {
+	replaceCurrentWord = function(newWord) {
 	    var selection = window.getSelection();
 	}
 
-	function setCursorPosition(position) {
+	setCursorPosition = function(position) {
 	    return setCursorRange(position, position);
 	}
 
-	function setCursorRange(start, end) {
+	setCursorRange = function(start, end) {
 	    var sel, range, typeArea;
 	    sel = window.getSelection();
 	    typeArea = $(TYPE_AREA).contents()[0];
@@ -253,14 +260,14 @@
 	    return range;
 	}
 
-	function getCurrentPosition() {
+	getCurrentPosition = function() {
 	    var sel, range;
 	    sel = window.getSelection();
 	    range = sel.getRangeAt(0).cloneRange();
 	    return range;
 	}
 
-	function insertWord(word, range) {
+	insertWord = function(word, range) {
 	    textNode = document.createTextNode(word);
 	    textNode.normalize()
 	    var currentPosition = range.startOffset
@@ -269,13 +276,13 @@
 	    return setCursorPosition(currentPosition + word.length);
 	}
 
-	function deletePreviousWord() {
+	deletePreviousWord = function() {
 	    var range = selectPreviousWord();
 	    range.deleteContents();
 	    return range;
 	}
 
-	function selectPreviousWord() {
+	selectPreviousWord = function() {
 	    var range = getCurrentPosition();
 	    var text = getInputText();
 	    var position = range.startOffset
@@ -285,16 +292,23 @@
 	        0) {
 	        start -= 1;
 	    }
-	    return setCursorRange(start, position);
+	    return setCursorRange(position - current_word_length, position);
 	}
 
-	function getInputText() {
+	getInputText = function() {
 	    var selection = window.getSelection();
 	    return selection.anchorNode.nodeValue;
 	}
 
-	function characterToNumber(character) {
+	characterToNumber = function(character) {
 	    return KEYS_TO_NUMBER[character];
+	}
+
+	changeState = function(new_state) {
+	    if (new_state == State.NEUTRAL) {
+	        current_word_length = 0;
+	    }
+	    state = new_state;
 	}
 
 
