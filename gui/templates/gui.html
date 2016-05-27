@@ -1,7 +1,7 @@
 {% load staticfiles %}
 
 <head>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+	<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>-->
 	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"> 
 	<script src="{% static 'js/main.js' %}"></script>
 	{% if debug %}
@@ -11,16 +11,14 @@
 
 <body>
 	<div class="logo" id="Logo">
-		<img class=logo__image" src="{% static "img/brown_fox_logo.png" %}" alt="" width="450px"/>
+		<img class=logo__image" src="{% static "img/lazy_fox_logo.png" %}" alt="" width="450px"/>
 	</div>
 	<div class="input">
 		<div>
 			<div class="input__suggestions-list" id="predictions-list">
 			</div>
 		</div>
-		<!--<textarea class="input__type-area" id="type-area">-->
-		<!--<textarea class="input__type-area" id="type-area">-->
-		<div id="type-area" contenteditable="true">Hello World</div>
+		<div class="input__type-area" id="type-area" contenteditable="true">Hello World</div>
 	</div>
 
 </body>
