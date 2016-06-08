@@ -108,7 +108,6 @@
 	updatePredictions = function(character) {
 	    removePredictions();
 	    currentWord = getCurrentWord(character);
-	    console.log(currentWord);
 	    if (currentWord == null) {
 	        return
 	    }
@@ -162,11 +161,13 @@
 	}
 
 	selectPrediction = function(number) {
-	    console.log($(PREDICTIONS_LIST).children().length);
 	    if (number >= $(PREDICTIONS_LIST).children().length) {
 	        return false
 	    }
 	    prediction = $(PREDICTIONS_LIST).children()[number].innerHTML;
+	    $(PREDICTIONS_LIST + " div:nth-child(" + (number + 1) + ")").addClass(
+	        "input__suggestion-list-item--selected"
+	    );
 	    var range = deletePreviousWord(prediction, range);
 	    range = insertWord(prediction, range);
 	    if (AUTO_WHTE_SPACE) {
@@ -182,7 +183,6 @@
 
 	window.onload = function() {
 	    $(TYPE_AREA).keypress(function(evt) {
-	        console.log(current_word_length);
 	        if (evt.which) {
 	            var character = String.fromCharCode(evt.which);
 	            if (state == State.SELECTING) {
@@ -191,7 +191,7 @@
 	                    console.log("Invalid selection");
 	                    return false;
 	                }
-	                removePredictions();
+	                setTimeout(removePredictions, 10);
 	                changeState(State.NEUTRAL);
 	            } else if (state == State.TYPING) {
 	                if (evt.keyCode == WHITE_SPACE_CODE &&

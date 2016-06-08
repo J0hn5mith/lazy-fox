@@ -1,4 +1,4 @@
-import re, sys
+import re, sys, csv
 
 class Predictor():
 	def __init__(self):
@@ -10,20 +10,32 @@ class Predictor():
 				'j': 'yhnujm', 
 				'k': 'ik,', 
 				'l': 'ol.', 
-				';': 'p;/', 
+				';': 'p;/\'-', 
 				}
 		self.m = dict((l, str(k)) for k,v in self.keys.items() for l in v)
 		self.data, self.ocurrences = {}, {}
 		self.wmatch = re.compile('[^a-z]+')
 
 	def train(self, f):
-		for word in self.wmatch.split(f.read().lower()):
-			self._learn(word)
+		reader = csv.reader(f, delimiter=",")
+		for row in reader:
+			self._learn(str(row[1].strip().lower()))
 
 		for key, value in self.keys.items():
 			for character in value:
 				self._learn(character)
 			self._learn(key)
+
+	def _train_verbs(self, f):
+		reader = csv.reader(f, delimiter=",")
+		for row in reader:
+			for field in row:
+				field = field.replace('(', ',')
+				field = field.replace(')', '')
+				field = field.replace('/', ', ')
+				for word in field.split(','):
+					self._learn(word.strip().lower())
+
 
 	def search(self, n):
 		if not n in self.data:
@@ -45,3 +57,11 @@ class Predictor():
 				else:
 					self.data[inp].add(word)
 		self.ocurrences[word] = 1
+
+DefaultPredictor = Predictor()
+
+with open('predictive_text/data/training_data.csv', 'r') as f:
+	DefaultPredictor.train(f)
+
+with open('predictive_text/data/verbs.csv', 'r') as f:
+	DefaultPredictor._train_verbs(f)

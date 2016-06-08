@@ -1,12 +1,22 @@
 /*https://lincolnloop.com/blog/integrating-front-end-tools-your-django-project/*/
+
+/*Fonts*/
 $font-stack:    American Typewriter’, ‘Courier New’, Courier, Monaco, mono;
+
+/*Color Palate*/
+$blue-light: 789DD3;
+$blue: 456FAD;
+$orange: FFC157;
+
 $primary-color: black;
 $font: black;
 $content-width: 500px;
 $background: white;
 $background-light: white;
 $background-dark: white;
-$yellow: #FFFA00;
+
+$high-light-color: $blue-light;
+$active-color: $orange;
 
 
 body {
@@ -18,7 +28,7 @@ body {
 }
 
 ::selection {
-	background: $yellow;
+	background: $high-light-color;
 	color:$font; 
 }
 
@@ -62,11 +72,14 @@ body {
 }
 
 .input__suggestion-list-item--highlighted {
-	background-color: $yellow;
+	background-color: $high-light-color;
+}
+
+.input__suggestion-list-item--selected {
+	background-color: $active-color;
 }
 
 .input__type-area{
-
 	background-color: $background-light;
 	width: $content-width;
 	height: $content-width;
@@ -77,4 +90,28 @@ body {
 	border: 1px solid black;
 	outline: 0px solid transparent;
 }
+
+/*$color-primary-0: #D4F553;	 Main Primary color */
+/*$color-primary-1: #F2FEC6;*/
+/*$color-primary-2: #E2FA83;*/
+/*$color-primary-3: #B4D920;*/
+/*$color-primary-4: #6C8608;*/
+
+/*$color-secondary-1-0: #456FAD;	 Main Secondary color (1) */
+/*$color-secondary-1-1: #C3D7F4;*/
+/*$color-secondary-1-2: #789DD3;*/
+/*$color-secondary-1-3: #225095;*/
+/*$color-secondary-1-4: #0D2D5C;*/
+
+/*$color-secondary-2-0: #FFC157;	 Main Secondary color (2) */
+/*$color-secondary-2-1: #FFEAC7;*/
+/*$color-secondary-2-2: #FFD286;*/
+/*$color-secondary-2-3: #E29B22;*/
+/*$color-secondary-2-4: #8C5B08;*/
+
+/*$color-complement-0: #B53EA7;	 Main Complement color */
+/*$color-complement-1: #F5BFEE;*/
+/*$color-complement-2: #D871CB;*/
+/*$color-complement-3: #9D178C;*/
+/*$color-complement-4: #610656;*/
 

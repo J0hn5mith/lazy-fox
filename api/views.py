@@ -1,15 +1,17 @@
 from django.http import JsonResponse
-from predictive_text.prediction import Predictor
+from predictive_text.prediction import Predictor, DefaultPredictor
 import json
 from django.views.decorators.csrf import csrf_exempt
 import logging
 
 @csrf_exempt
 def  predict(request):
-    p = Predictor()
+    p = DefaultPredictor
 
-    with open('static/alice_in_wonderland.txt', 'r') as f:
-        p.train(f)
+    # with open('predictive_text/data/training_data.csv', 'r') as f:
+        # p.train(f)
+    # with open('predictive_text/data/verbs.csv', 'r') as f:
+        # p._train_verbs(f)
 
     try:
         json_data = json.loads(request.body.decode('utf-8'))
