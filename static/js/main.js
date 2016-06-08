@@ -127,6 +127,10 @@
 	    $(PREDICTIONS_LIST).children().remove();
 	}
 
+	getNumPredictions = function() {
+	    return $(PREDICTIONS_LIST).children().length;
+	}
+
 	addPredictions = function(predictions) {
 	    for (prediction of predictions) {
 	        $(PREDICTIONS_LIST).append(
@@ -175,10 +179,13 @@
 	    }
 	    return true
 	}
-
+	ITEM_HIGHLIGHT_CLASS = "input__suggestion-list-item--highlighted"
 	highlightPredictions = function() {
-	    $(PREDICTIONS_LIST).children().addClass(
-	        "input__suggestion-list-item--highlighted")
+	    $(PREDICTIONS_LIST).children().addClass(ITEM_HIGHLIGHT_CLASS)
+	}
+
+	deHighlightPredictions = function() {
+	    $(PREDICTIONS_LIST).children().removeClass(ITEM_HIGHLIGHT_CLASS)
 	}
 
 	window.onload = function() {
@@ -191,13 +198,17 @@
 	                    console.log("Invalid selection");
 	                    return false;
 	                }
-	                setTimeout(removePredictions, 10);
-	                changeState(State.NEUTRAL);
+	                setState(State.NEUTRAL);
 	            } else if (state == State.TYPING) {
 	                if (evt.keyCode == WHITE_SPACE_CODE &&
 	                    getCurrentWord() != null) {
-	                    highlightPredictions();
-	                    changeState(State.SELECTING);
+	                    if (getNumPredictions() == 1) {
+	                        selectPrediction(0);
+	                        setState(State.NEUTRAL);
+	                    } else {
+	                        highlightPredictions();
+	                        setState(State.SELECTING);
+	                    }
 	                } else {
 	                    handleCharacterInput(character)
 	                }
@@ -208,11 +219,35 @@
 	                } else {
 	                    handleCharacterInput(character)
 	                }
-	                changeState(State.TYPING);
+	                setState(State.TYPING);
 	            }
 	        }
 	        return false;
-	    })
+	    });
+
+	    $(TYPE_AREA).on('keydown', function() {
+	        if (state == State.TYPING || state == State.NEUTRAL) {
+	            if (event.keyCode == BACK_SPACE_CODE) {
+	                current_word_length = Math.max(current_word_length -
+	                    1,
+	                    0);
+	                // Wait until character is deleted
+	                if (current_word_length > 0) {
+	                    setTimeout(function() {
+	                        updatePredictions();
+	                    }.bind(this), 10);
+	                } else {
+	                    setState(State.NEUTRAL);
+	                }
+	            }
+	        } else {
+	            if (event.keyCode == BACK_SPACE_CODE) {
+	                setState(State.TYPING);
+	                updatePredictions();
+	                return false;
+	            }
+	        }
+	    });
 	}
 
 	handleCharacterInput = function(character) {
@@ -304,8 +339,9 @@
 	    return KEYS_TO_NUMBER[character];
 	}
 
-	changeState = function(new_state) {
+	setState = function(new_state) {
 	    if (new_state == State.NEUTRAL) {
+	        setTimeout(removePredictions, 10);
 	        current_word_length = 0;
 	    }
 	    state = new_state;
