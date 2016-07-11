@@ -53,7 +53,7 @@
 	    'j': 'yhnujm',
 	    'k': 'ik,',
 	    'l': 'ol.',
-	    ';': 'p;/',
+	    ';': 'p;/?',
 	}
 
 	KEYS_TO_NUMBER = {
@@ -75,11 +75,12 @@
 
 	TYPE_AREA = "#type-area";
 	PREDICTIONS_LIST = "#predictions-list";
-	PREDICTION_SERVER_URL = "http://127.0.0.1:8000/api/predict/";
+	PREDICTION_SERVER_URL = "http://127.0.0.1:8000/api/";
 	WHITE_SPACE_CODE = 32;
 	BACK_SPACE_CODE = 8;
 	WHETE_SPACE_STRINGS = [" ", "\xa0"];
 	AUTO_WHTE_SPACE = false;
+
 
 	var state = State.NEUTRAL;
 	var current_word_length = 0;
@@ -113,13 +114,23 @@
 	    }
 	    data = '{ "sequence": "' + currentWord + '"}'
 	    $.ajax({
-	        url: PREDICTION_SERVER_URL,
+	        url: PREDICTION_SERVER_URL + "predict/",
 	        type: 'POST',
 	        data: data,
 	        success: function(response) {
 	            var predictions = response.suggestions;
 	            addPredictions(predictions);
 	        }
+	    });
+	}
+
+	learnWord = function(word) {
+	    data = '{ "word": "' + word + '"}'
+	    $.ajax({
+	        url: PREDICTION_SERVER_URL + "learn/",
+	        type: 'POST',
+	        data: data,
+	        success: function(response) {}
 	    });
 	}
 
@@ -191,7 +202,7 @@
 	window.onload = function() {
 	    $(TYPE_AREA).keypress(function(evt) {
 	        if (evt.which) {
-	            var character = String.fromCharCode(evt.which);
+	            var character = String.fromCharCode(evt.which).toLowerCase();
 	            if (state == State.SELECTING) {
 	                number = characterToNumber(character)
 	                if (!selectPrediction(number)) {
@@ -214,6 +225,7 @@
 	                }
 	            } else if (state == State.NEUTRAL) {
 	                if (WHETE_SPACE_STRINGS.indexOf(character) >= 0) {
+	                    learnWord(getPreviousWordRange().startContainer.data);
 	                    var range = getCurrentPosition();
 	                    insertWord("\xa0", range);
 	                } else {
@@ -317,14 +329,31 @@
 	    return range;
 	}
 
+	getRange = function(start, end) {
+	    var range = document.createRange();
+	    var typeArea = $(TYPE_AREA).contents()[0];
+	    range.setStart(typeArea, start);
+	    range.setEnd(typeArea, end);
+	    return range;
+	}
+
+	getPreviousWordRange = function() {
+	    var range = getCurrentPosition();
+	    var text = getInputText();
+	    var position = range.startOffset
+	    var start = position;
+	    while ( start >= 1 && WHETE_SPACE_STRINGS.indexOf(text.charAt(start - 1)) < 0) {
+	        start -= 1;
+	    }
+	    return(getRange(start, range.startOffset))
+	}
+
 	selectPreviousWord = function() {
 	    var range = getCurrentPosition();
 	    var text = getInputText();
 	    var position = range.startOffset
 	    var start = position;
-	    while (start >= 1 && WHETE_SPACE_STRINGS.indexOf(text.charAt(start -
-	            1)) <
-	        0) {
+	    while ( start >= 1 && WHETE_SPACE_STRINGS.indexOf(text.charAt(start - 1)) < 0) {
 	        start -= 1;
 	    }
 	    return setCursorRange(position - current_word_length, position);
