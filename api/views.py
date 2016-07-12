@@ -22,11 +22,14 @@ def  predict(request):
 def  learn(request):
     try:
         json_data = json.loads(request.body.decode('utf-8'))
+        print(json_data)
         word = json_data['word']
     except  ValueError as e:
         return JsonResponse({
             "error": "Invalid JSON"
             }, status=400)
+
+    print("Learn word: " + word)
     DefaultPredictor.learn(word)
     return JsonResponse({
         "status": "OK",

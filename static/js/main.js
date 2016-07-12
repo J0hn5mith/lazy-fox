@@ -58,6 +58,8 @@
 
 	KEYS_TO_NUMBER = {
 	    'a': 0,
+	    '\xa0': 0,
+	    ' ': 0,
 	    's': 1,
 	    'd': 2,
 	    'f': 3,
@@ -225,7 +227,7 @@
 	                }
 	            } else if (state == State.NEUTRAL) {
 	                if (WHETE_SPACE_STRINGS.indexOf(character) >= 0) {
-	                    learnWord(getPreviousWordRange().startContainer.data);
+	                    learnWord(getPreviousWordRange().toString());
 	                    var range = getCurrentPosition();
 	                    insertWord("\xa0", range);
 	                } else {

@@ -48,7 +48,15 @@ class Predictor():
 			results[int(len(match) != len(sequence))].append((
 				match, self.ocurrences[match]
 				))
-		return list(dict(results[0]).keys())
+
+		import operator
+		import collections
+		results = dict(results[0])
+		sorted_results = collections.OrderedDict(sorted(
+			results.items(), key=operator.itemgetter(1), reverse=True)
+			)
+
+		return list(sorted_results.keys())
 
 
 	def learn(self, word):
