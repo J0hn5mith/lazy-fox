@@ -6,6 +6,8 @@ $font-stack:    American Typewriter’, ‘Courier New’, Courier, Monaco, mono
 /*Color Palate*/
 $blue-light: 789DD3;
 $blue: 456FAD;
+$green-light: 9dd378;
+
 $orange: FFC157;
 
 $primary-color: black;
@@ -15,7 +17,8 @@ $background: white;
 $background-light: white;
 $background-dark: white;
 
-$high-light-color: $blue-light;
+$high-light-color-1: $blue-light;
+$high-light-color-2: 9dd378;
 $active-color: $orange;
 
 
@@ -28,7 +31,7 @@ body {
 }
 
 ::selection {
-	background: $high-light-color;
+	background: $high-light-color-1;
 	color:$font; 
 }
 
@@ -72,7 +75,11 @@ body {
 }
 
 .input__suggestion-list-item--highlighted {
-	background-color: $high-light-color;
+	background-color: $high-light-color-1;
+}
+
+.input__suggestion-list-item--highlighted-2 {
+	background-color: $high-light-color-2;
 }
 
 .input__suggestion-list-item--selected {

@@ -1,38 +1,38 @@
-from django.http import JsonResponse
-from predictive_text.prediction import Predictor, DefaultPredictor
+"""Views for the api module."""
+
 import json
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import logging
+from predictive_text.prediction import DefaultPredictor
+
 
 @csrf_exempt
 def  predict(request):
-    p = DefaultPredictor
+    """Returns a list of predictions for a given word."""
+
     try:
         json_data = json.loads(request.body.decode('utf-8'))
         sequence = json_data['sequence']
-    except  ValueError as e:
-        return JsonResponse({ "error": "Invalid JSON" }, status=400) 
-    response = []
+    except  ValueError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
     return JsonResponse({
         "sequence": sequence,
-        "suggestions": p.search(sequence)
+        "suggestions": DefaultPredictor.search(sequence)
         })
 
 @csrf_exempt
 def  learn(request):
+    """Learns a new word"""
+
     try:
         json_data = json.loads(request.body.decode('utf-8'))
-        print(json_data)
         word = json_data['word']
-    except  ValueError as e:
+    except  ValueError:
         return JsonResponse({
             "error": "Invalid JSON"
             }, status=400)
 
-    print("Learn word: " + word)
     DefaultPredictor.learn(word)
     return JsonResponse({
         "status": "OK",
         })
-
-

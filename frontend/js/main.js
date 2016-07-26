@@ -31,7 +31,9 @@ State = {
 
 TYPE_AREA = "#type-area";
 PREDICTIONS_LIST = "#predictions-list";
-PREDICTION_SERVER_URL = "http://127.0.0.1:8000/api/";
+//PREDICTION_SERVER_URL = "http://127.0.0.1:8000/api/";
+P:EDICTION_SERVER_URL = "http://10.208.154.83:8000/api/";
+
 WHITE_SPACE_CODE = 32;
 BACK_SPACE_CODE = 8;
 WHETE_SPACE_STRINGS = [" ", "\xa0"];
@@ -147,12 +149,15 @@ selectPrediction = function(number) {
     return true
 }
 ITEM_HIGHLIGHT_CLASS = "input__suggestion-list-item--highlighted"
+ITEM_HIGHLIGHT_CLASS_2 = "input__suggestion-list-item--highlighted-2"
 highlightPredictions = function() {
-    $(PREDICTIONS_LIST).children().addClass(ITEM_HIGHLIGHT_CLASS)
+    $(PREDICTIONS_LIST).children().slice(0,4).addClass(ITEM_HIGHLIGHT_CLASS)
+    $(PREDICTIONS_LIST).children().slice(4,8).addClass(ITEM_HIGHLIGHT_CLASS_2)
 }
 
 deHighlightPredictions = function() {
     $(PREDICTIONS_LIST).children().removeClass(ITEM_HIGHLIGHT_CLASS)
+    $(PREDICTIONS_LIST).children().removeClass(ITEM_HIGHLIGHT_CLASS_2)
 }
 
 window.onload = function() {
