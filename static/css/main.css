@@ -1,0 +1,79 @@
+@charset "UTF-8";
+/*https://lincolnloop.com/blog/integrating-front-end-tools-your-django-project/*/
+/*Fonts*/
+/*Color Palate*/
+body {
+  font: 100% American Typewriter’, ‘Courier New’, Courier, Monaco, mono;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  color: black; }
+
+::selection {
+  background: 789DD3;
+  color: black; }
+
+.logo {
+  align-self: center; }
+
+.input {
+  align-self: center;
+  width: 500px;
+  margin-top: 30px; }
+
+.input__suggestions-list {
+  list-style-position: inside;
+  margin-bottom: 20px;
+  padding: -10px;
+  margin-left: -10px;
+  font-size: 24px;
+  height: 40px; }
+
+.input__suggestions-list-item {
+  background-color: white;
+  display: inline;
+  margin: 10px;
+  padding: 10px;
+  border: black 1px solid;
+  border-radius: 10px; }
+
+.input__suggestion-list-item--highlighted {
+  background-color: 789DD3; }
+
+.input__suggestion-list-item--highlighted-2 {
+  background-color: 9dd378; }
+
+.input__suggestion-list-item--selected {
+  background-color: FFC157; }
+
+.input__type-area {
+  background-color: white;
+  width: 500px;
+  height: 500px;
+  border-radius: 10px;
+  padding: 30px;
+  font-family: inherit;
+  font-size: inherit;
+  border: 1px solid black;
+  outline: 0px solid transparent; }
+
+/*$color-primary-0: #D4F553;	 Main Primary color */
+/*$color-primary-1: #F2FEC6;*/
+/*$color-primary-2: #E2FA83;*/
+/*$color-primary-3: #B4D920;*/
+/*$color-primary-4: #6C8608;*/
+/*$color-secondary-1-0: #456FAD;	 Main Secondary color (1) */
+/*$color-secondary-1-1: #C3D7F4;*/
+/*$color-secondary-1-2: #789DD3;*/
+/*$color-secondary-1-3: #225095;*/
+/*$color-secondary-1-4: #0D2D5C;*/
+/*$color-secondary-2-0: #FFC157;	 Main Secondary color (2) */
+/*$color-secondary-2-1: #FFEAC7;*/
+/*$color-secondary-2-2: #FFD286;*/
+/*$color-secondary-2-3: #E29B22;*/
+/*$color-secondary-2-4: #8C5B08;*/
+/*$color-complement-0: #B53EA7;	 Main Complement color */
+/*$color-complement-1: #F5BFEE;*/
+/*$color-complement-2: #D871CB;*/
+/*$color-complement-3: #9D178C;*/
+/*$color-complement-4: #610656;*/
