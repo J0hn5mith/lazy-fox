@@ -79,7 +79,7 @@
 	PREDICTIONS_LIST = "#predictions-list";
 	//PREDICTION_SERVER_URL = "http://127.0.0.1:8000/api/";
 	//PREDICTION_SERVER_URL = "http://10.208.154.83:8000/api/";
-	PREDICTION_SERVER_URL = "http://lazy-fox.jan-meier.ch/api/";
+	PREDICTION_SERVER_URL = "https://lazy-fox.jan-meier.ch/api/";
 
 	WHITE_SPACE_CODE = 32;
 	BACK_SPACE_CODE = 8;
@@ -124,6 +124,7 @@
 	        data: data,
 	        success: function(response) {
 	            var predictions = response.suggestions;
+	            removePredictions();
 	            addPredictions(predictions);
 	        }
 	    });
