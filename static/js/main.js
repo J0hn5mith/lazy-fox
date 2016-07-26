@@ -78,7 +78,8 @@
 	TYPE_AREA = "#type-area";
 	PREDICTIONS_LIST = "#predictions-list";
 	//PREDICTION_SERVER_URL = "http://127.0.0.1:8000/api/";
-	P:EDICTION_SERVER_URL = "http://10.208.154.83:8000/api/";
+	//PREDICTION_SERVER_URL = "http://10.208.154.83:8000/api/";
+	PREDICTION_SERVER_URL = "http://lazy-fox.jan-meier.ch/api/";
 
 	WHITE_SPACE_CODE = 32;
 	BACK_SPACE_CODE = 8;
